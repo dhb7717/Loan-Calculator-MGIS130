@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A simple loan payment calculator for estimating monthly payments and total interest.">
+  <title>Loan Calculator | MGIS130</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="site-header">
+      <p class="eyebrow">PERSONAL FINANCE TOOL</p>
+      <h1>Loan Calculator</h1>
+      <p class="subtitle">Estimate your monthly payment and understand the total cost of a loan.</p>
+    </header>
+
+    <section class="calculator-card" aria-labelledby="calculator-heading">
+      <div class="card-heading">
+        <div>
+          <p class="eyebrow">PAYMENT ESTIMATOR</p>
+          <h2 id="calculator-heading">Loan details</h2>
+        </div>
+        <span class="status-pill">Estimate only</span>
+      </div>
+
+      <form id="loan-form" novalidate>
+        <div class="field">
+          <label for="loan-amount">Loan amount ($)</label>
+          <input id="loan-amount" name="loanAmount" type="number" min="0.01" max="1000000000"
+                 step="0.01" value="25000" inputmode="decimal" required>
+          <small>Enter the amount you plan to borrow.</small>
+        </div>
+
+        <div class="field">
+          <label for="interest-rate">Annual interest rate (%)</label>
+          <input id="interest-rate" name="interestRate" type="number" min="0" max="100"
+                 step="0.01" value="6.5" inputmode="decimal" required>
+          <small>Use 0 if the loan has no interest.</small>
+        </div>
+
+        <div class="field">
+          <label for="loan-term">Loan term (years)</label>
+          <input id="loan-term" name="loanTerm" type="number" min="1" max="50"
+                 step="1" value="5" inputmode="numeric" required>
+          <small>Choose a whole number from 1 to 50.</small>
+        </div>
+
+        <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
+        <button type="submit" class="calculate-button">Calculate payment</button>
+      </form>
+
+      <section class="results" aria-labelledby="results-heading" aria-live="polite">
+        <div class="results-title">
+          <h2 id="results-heading">Your estimate</h2>
+          <p>Based on the loan details above</p>
+        </div>
+        <div class="monthly-result">
+          <span>Estimated monthly payment</span>
+          <strong id="monthly-payment">$0.00</strong>
+        </div>
+        <div class="result-grid">
+          <div class="result-item">
+            <span>Total repayment</span>
+            <strong id="total-payment">$0.00</strong>
+          </div>
+          <div class="result-item">
+            <span>Total interest</span>
+            <strong id="total-interest">$0.00</strong>
+          </div>
+        </div>
+        <p class="disclaimer">This is an estimate. It excludes fees, taxes, insurance, and other lender charges.</p>
+      </section>
+    </section>
+
+    <footer>
+      <p>MGIS130 · Three-layer information system demonstration</p>
+    </footer>
+  </main>
+</body>
+</html>
