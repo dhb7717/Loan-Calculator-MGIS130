@@ -354,3 +354,43 @@ button {
   }
 }
 
+/* Keep calculator actions organized and touch-friendly. */
+.button-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.button-row button {
+  min-height: 48px;
+}
+
+.reset-button {
+  padding: 12px 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background: #f1f5f9;
+}
+
+.reset-button:focus-visible {
+  outline: 3px solid #64748b;
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+}
