@@ -1,30 +1,26 @@
 
-/*
- * Data layer: reads and validates user input.
- * Processing layer: calculates monthly payments and totals.
- * Presentation layer: displays results and error messages.
- */
-
 "use strict";
 
+// DATA LAYER: find the form and its fields.
 const loanForm = document.querySelector("#loan-form");
 const amountInput = document.querySelector("#loan-amount");
 const rateInput = document.querySelector("#interest-rate");
 const termInput = document.querySelector("#loan-term");
 const errorMessage = document.querySelector("#error-message");
+const resetButton = document.querySelector("#reset-button");
 
 const monthlyPaymentOutput = document.querySelector("#monthly-payment");
 const totalPaymentOutput = document.querySelector("#total-payment");
 const totalInterestOutput = document.querySelector("#total-interest");
+
+const loanInputs = [amountInput, rateInput, termInput];
 
 const moneyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD"
 });
 
-const loanInputs = [amountInput, rateInput, termInput];
-
-// DATA LAYER: validate input before using it.
+// DATA LAYER: validate the user's entries.
 function readLoanData() {
   const amountText = amountInput.value.trim();
   const rateText = rateInput.value.trim();
@@ -34,36 +30,24 @@ function readLoanData() {
   const annualRate = Number(rateText);
   const years = Number(termText);
 
-  if (
-    amountText === "" ||
-    !Number.isFinite(amount) ||
-    amount <= 0 ||
-    amount > 1_000_000_000
-  ) {
+  if (amountText === "" || !Number.isFinite(amount) ||
+      amount <= 0 || amount > 1_000_000_000) {
     return {
       error: "Enter a loan amount greater than $0 and no more than $1,000,000,000.",
       field: amountInput
     };
   }
 
-  if (
-    rateText === "" ||
-    !Number.isFinite(annualRate) ||
-    annualRate < 0 ||
-    annualRate > 100
-  ) {
+  if (rateText === "" || !Number.isFinite(annualRate) ||
+      annualRate < 0 || annualRate > 100) {
     return {
       error: "Enter an annual interest rate from 0% to 100%.",
       field: rateInput
     };
   }
 
-  if (
-    termText === "" ||
-    !Number.isInteger(years) ||
-    years < 1 ||
-    years > 50
-  ) {
+  if (termText === "" || !Number.isInteger(years) ||
+      years < 1 || years > 50) {
     return {
       error: "Enter a whole-number loan term from 1 to 50 years.",
       field: termInput
@@ -73,7 +57,7 @@ function readLoanData() {
   return { data: { amount, annualRate, years } };
 }
 
-// PROCESSING LAYER: calculate the loan payment and total costs.
+// PROCESSING LAYER: calculate payment and total costs.
 function calculateLoan(loan) {
   const numberOfPayments = loan.years * 12;
   const monthlyRate = loan.annualRate / 100 / 12;
@@ -83,49 +67,37 @@ function calculateLoan(loan) {
   if (monthlyRate === 0) {
     monthlyPayment = loan.amount / numberOfPayments;
   } else {
-    const rateFactor = Math.pow(1 + monthlyRate, numberOfPayments);
-
+    const factor = Math.pow(1 + monthlyRate, numberOfPayments);
     monthlyPayment =
-      loan.amount *
-      (monthlyRate * rateFactor) /
-      (rateFactor - 1);
+      loan.amount * (monthlyRate * factor) / (factor - 1);
   }
 
   const totalPayment = monthlyPayment * numberOfPayments;
   const totalInterest = Math.max(0, totalPayment - loan.amount);
 
-  // Prevent invalid numeric results from being displayed.
-  if (
-    !Number.isFinite(monthlyPayment) ||
-    !Number.isFinite(totalPayment) ||
-    !Number.isFinite(totalInterest)
-  ) {
-    throw new Error("The calculation produced an invalid result.");
+  if (![monthlyPayment, totalPayment, totalInterest].every(Number.isFinite)) {
+    throw new Error("Invalid calculation result.");
   }
 
   return { monthlyPayment, totalPayment, totalInterest };
 }
 
-// PRESENTATION LAYER: display valid results.
+// PRESENTATION LAYER: show the calculated results.
 function displayResults(results) {
   monthlyPaymentOutput.textContent =
     moneyFormatter.format(results.monthlyPayment);
-
   totalPaymentOutput.textContent =
     moneyFormatter.format(results.totalPayment);
-
   totalInterestOutput.textContent =
     moneyFormatter.format(results.totalInterest);
 }
 
-// Clear old results so invalid input cannot leave a misleading estimate.
 function clearResults() {
   monthlyPaymentOutput.textContent = "—";
   totalPaymentOutput.textContent = "—";
   totalInterestOutput.textContent = "—";
 }
 
-// Remove old validation messages and field warnings.
 function clearValidation() {
   errorMessage.textContent = "";
 
@@ -134,7 +106,6 @@ function clearValidation() {
   });
 }
 
-// Show an error and focus the field that needs attention.
 function showError(message, field = null) {
   clearResults();
   errorMessage.textContent = message;
@@ -145,7 +116,7 @@ function showError(message, field = null) {
   }
 }
 
-// Revalidate naturally as the user corrects a flagged field.
+// Clear the old warning when the user starts correcting an input.
 loanInputs.forEach((input) => {
   input.addEventListener("input", () => {
     input.removeAttribute("aria-invalid");
@@ -153,7 +124,7 @@ loanInputs.forEach((input) => {
   });
 });
 
-// Handle form submission safely.
+// Calculate the loan when the form is submitted.
 loanForm.addEventListener("submit", (event) => {
   event.preventDefault();
   clearValidation();
@@ -166,18 +137,34 @@ loanForm.addEventListener("submit", (event) => {
       return;
     }
 
-    const results = calculateLoan(loanResult.data);
-    displayResults(results);
+    displayResults(calculateLoan(loanResult.data));
   } catch (error) {
-    console.error("Loan calculator error:", error);
-
-    showError(
-      "Sorry, the payment could not be calculated. Check your entries and try again."
-    );
+    console.error("Loan calculation error:", error);
+    showError("Sorry, the payment could not be calculated. Check your entries and try again.");
   }
 });
 
-// Display an initial estimate when the default values are valid.
+// Reset all fields and recalculate the default values.
+resetButton.addEventListener("click", () => {
+  loanForm.reset();
+  clearValidation();
+
+  try {
+    const loanResult = readLoanData();
+
+    if (loanResult.error) {
+      showError(loanResult.error, loanResult.field);
+      return;
+    }
+
+    displayResults(calculateLoan(loanResult.data));
+  } catch (error) {
+    console.error("Loan reset error:", error);
+    showError("Unable to reset the calculator. Please try again.");
+  }
+});
+
+// Show the initial estimate on page load.
 try {
   const initialLoan = readLoanData();
 
@@ -187,6 +174,6 @@ try {
     clearResults();
   }
 } catch (error) {
-  console.error("Initial loan calculation error:", error);
+  console.error("Initial calculation error:", error);
   clearResults();
 }
