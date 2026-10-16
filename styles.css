@@ -233,3 +233,124 @@ footer p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
+
+
+/* Mobile usability improvements */
+
+/* Prevent mobile browsers from resizing text unexpectedly. */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+input,
+button {
+  font-size: 16px;
+}
+
+/* Respect the safe area on phones with screen cutouts. */
+.page-shell {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+/* Small screens and phones. */
+@media (max-width: 520px) {
+  .page-shell {
+    width: calc(100% - 24px);
+    padding-top: 24px;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
+    overflow-wrap: anywhere;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .calculator-card {
+    border-radius: 16px;
+  }
+
+  .card-heading {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 20px 16px;
+  }
+
+  .status-pill {
+    white-space: nowrap;
+  }
+
+  form,
+  .results {
+    padding: 20px 16px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  input {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .calculate-button {
+    min-height: 52px;
+    padding: 14px 16px;
+  }
+
+  .monthly-result {
+    padding: 16px;
+  }
+
+  .result-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .result-item {
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .disclaimer {
+    line-height: 1.6;
+  }
+}
+
+/* Extra-small phones. */
+@media (max-width: 360px) {
+  .page-shell {
+    width: calc(100% - 20px);
+  }
+
+  .card-heading,
+  form,
+  .results {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .monthly-result {
+    padding: 13px;
+  }
+
+  .monthly-result strong {
+    font-size: 1.9rem;
+  }
+
+  .result-item strong {
+    font-size: 1.1rem;
+  }
+}
+
+/* Avoid hover-only styling on touchscreens. */
+@media (hover: none) {
+  .calculate-button:hover {
+    background: var(--accent);
+  }
+}
+
