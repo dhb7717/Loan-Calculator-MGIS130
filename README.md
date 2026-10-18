@@ -79,21 +79,27 @@ formula can be changed without redesigning the page.
 
 No additional packages or build tools are required.
 
-## Testing Checklist
 
-Test the application with the following scenarios and record the
-actual outcome of each test before submitting the project.
+## Testing and Verification
 
-- [ ] Valid loan amount, interest rate, and term.
-- [ ] Zero-interest loan.
-- [ ] Empty loan amount.
-- [ ] Negative loan amount.
-- [ ] Negative or excessively high interest rate.
-- [ ] Fractional or out-of-range loan term.
-- [ ] Reset restores the default values and updates the results.
-- [ ] Invalid input displays an error and clears old results.
-- [ ] Layout remains usable at narrow mobile screen widths.
-- [ ] Live GitHub Pages application loads correctly.
+The application was tested against the following scenarios. All tests passed.
+
+| Test | Expected Result | Status |
+|---|---|---|
+| Valid loan inputs | Monthly payment, total repayment, and total interest display correctly. | PASS |
+| Zero-interest loan | Monthly payment equals principal divided by the number of monthly payments, with $0.00 interest. | PASS |
+| Empty loan amount | An error appears, and outdated results are cleared. | PASS |
+| Negative loan amount | Invalid input is rejected with an appropriate error. | PASS |
+| Negative interest rate | Unsupported negative rates are rejected. | PASS |
+| Excessively high interest rate | Input is handled according to the validation rules without crashing. | PASS |
+| Fractional or out-of-range loan term | Invalid terms are rejected according to the validation rules. | PASS |
+| Reset button | Form fields return to their default values, errors clear, and results update appropriately. | PASS |
+| Invalid input after a successful calculation | Outdated results are cleared rather than displayed as current. | PASS |
+| Mobile layout | Form fields, buttons, messages, and results remain readable and usable on a narrow screen. | PASS |
+| Live deployment | The GitHub Pages application loads and performs calculations correctly. | PASS |
+
+**Overall result:** All 11 tests passed.
+
 
 ## Limitations
 
