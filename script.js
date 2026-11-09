@@ -1,88 +1,63 @@
 
 "use strict";
 
-// DATA LAYER: locate form elements and inputs.
+// DATA LAYER: find the form and its fields.
 const loanForm = document.querySelector("#loan-form");
-const resetButton = document.querySelector("#reset-button");
+const amountInput = document.querySelector("#loan-amount");
+const rateInput = document.querySelector("#interest-rate");
+const termInput = document.querySelector("#loan-term");
 const errorMessage = document.querySelector("#error-message");
+const resetButton = document.querySelector("#reset-button");
 
-const loanInputs = [
-  document.querySelector("#amount-a"),
-  document.querySelector("#rate-a"),
-  document.querySelector("#term-a"),
-  document.querySelector("#amount-b"),
-  document.querySelector("#rate-b"),
-  document.querySelector("#term-b")
-];
+const monthlyPaymentOutput = document.querySelector("#monthly-payment");
+const totalPaymentOutput = document.querySelector("#total-payment");
+const totalInterestOutput = document.querySelector("#total-interest");
 
-const outputs = {
-  monthlyA: document.querySelector("#monthly-a"),
-  totalA: document.querySelector("#total-a"),
-  interestA: document.querySelector("#interest-a"),
-  monthlyB: document.querySelector("#monthly-b"),
-  totalB: document.querySelector("#total-b"),
-  interestB: document.querySelector("#interest-b"),
-  comparison: document.querySelector("#comparison-message"),
-  savings: document.querySelector("#savings-message")
-};
+const loanInputs = [amountInput, rateInput, termInput];
 
 const moneyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD"
 });
 
-// DATA LAYER: read and validate one loan.
-function readLoanData(startIndex, loanName) {
-  const amountText = loanInputs[startIndex].value.trim();
-  const rateText = loanInputs[startIndex + 1].value.trim();
-  const termText = loanInputs[startIndex + 2].value.trim();
+// DATA LAYER: validate the user's entries.
+function readLoanData() {
+  const amountText = amountInput.value.trim();
+  const rateText = rateInput.value.trim();
+  const termText = termInput.value.trim();
 
   const amount = Number(amountText);
   const annualRate = Number(rateText);
   const years = Number(termText);
 
-  if (
-    amountText === "" ||
-    !Number.isFinite(amount) ||
-    amount <= 0 ||
-    amount > 1_000_000_000
-  ) {
+  if (amountText === "" || !Number.isFinite(amount) ||
+      amount <= 0 || amount > 1_000_000_000) {
     return {
-      error: `${loanName}: Enter a loan amount greater than $0 and no more than $1,000,000,000.`,
-      field: loanInputs[startIndex]
+      error: "Enter a loan amount greater than $0 and no more than $1,000,000,000.",
+      field: amountInput
     };
   }
 
-  if (
-    rateText === "" ||
-    !Number.isFinite(annualRate) ||
-    annualRate < 0 ||
-    annualRate > 100
-  ) {
+  if (rateText === "" || !Number.isFinite(annualRate) ||
+      annualRate < 0 || annualRate > 100) {
     return {
-      error: `${loanName}: Enter an annual interest rate from 0% to 100%.`,
-      field: loanInputs[startIndex + 1]
+      error: "Enter an annual interest rate from 0% to 100%.",
+      field: rateInput
     };
   }
 
-  if (
-    termText === "" ||
-    !Number.isInteger(years) ||
-    years < 1 ||
-    years > 50
-  ) {
+  if (termText === "" || !Number.isInteger(years) ||
+      years < 1 || years > 50) {
     return {
-      error: `${loanName}: Enter a whole-number loan term from 1 to 50 years.`,
-      field: loanInputs[startIndex + 2]
+      error: "Enter a whole-number loan term from 1 to 50 years.",
+      field: termInput
     };
   }
 
-  return {
-    data: { amount, annualRate, years }
-  };
+  return { data: { amount, annualRate, years } };
 }
 
-// PROCESSING LAYER: calculate monthly payment and total costs.
+// PROCESSING LAYER: calculate payment and total costs.
 function calculateLoan(loan) {
   const numberOfPayments = loan.years * 12;
   const monthlyRate = loan.annualRate / 100 / 12;
@@ -100,65 +75,29 @@ function calculateLoan(loan) {
   const totalPayment = monthlyPayment * numberOfPayments;
   const totalInterest = Math.max(0, totalPayment - loan.amount);
 
-  if (
-    ![monthlyPayment, totalPayment, totalInterest].every(Number.isFinite)
-  ) {
+  if (![monthlyPayment, totalPayment, totalInterest].every(Number.isFinite)) {
     throw new Error("Invalid calculation result.");
   }
 
   return { monthlyPayment, totalPayment, totalInterest };
 }
 
-// PRESENTATION LAYER: display the results.
-function displayLoanResults(results, loanName) {
-  const suffix = loanName.toLowerCase();
-
-  outputs[`monthly${loanName}`].textContent =
+// PRESENTATION LAYER: show the calculated results.
+function displayResults(results) {
+  monthlyPaymentOutput.textContent =
     moneyFormatter.format(results.monthlyPayment);
-
-  outputs[`total${loanName}`].textContent =
+  totalPaymentOutput.textContent =
     moneyFormatter.format(results.totalPayment);
-
-  outputs[`interest${loanName}`].textContent =
+  totalInterestOutput.textContent =
     moneyFormatter.format(results.totalInterest);
 }
 
-// PRESENTATION LAYER: compare total repayment.
-function displayComparison(loanA, loanB) {
-  if (Math.abs(loanA.totalPayment - loanB.totalPayment) < 0.01) {
-    outputs.comparison.textContent =
-      "Both loans have approximately the same total repayment.";
-
-    outputs.savings.textContent = "";
-    return;
-  }
-
-  const cheaperLoan = loanA.totalPayment < loanB.totalPayment
-    ? "Loan A"
-    : "Loan B";
-
-  const savings = Math.abs(
-    loanA.totalPayment - loanB.totalPayment
-  );
-
-  outputs.comparison.textContent =
-    `${cheaperLoan} has the lower estimated total repayment.`;
-
-  outputs.savings.textContent =
-    `Estimated difference: ${moneyFormatter.format(savings)}.`;
-}
-
-// Clear previous results.
 function clearResults() {
-  Object.values(outputs).forEach((output) => {
-    output.textContent = "";
-  });
-
-  outputs.comparison.textContent =
-    "Enter your loan details and select Compare loans.";
+  monthlyPaymentOutput.textContent = "—";
+  totalPaymentOutput.textContent = "—";
+  totalInterestOutput.textContent = "—";
 }
 
-// Clear validation messages.
 function clearValidation() {
   errorMessage.textContent = "";
 
@@ -167,8 +106,7 @@ function clearValidation() {
   });
 }
 
-// Display an error and focus the invalid field.
-function showError(message, field) {
+function showError(message, field = null) {
   clearResults();
   errorMessage.textContent = message;
 
@@ -178,7 +116,7 @@ function showError(message, field) {
   }
 }
 
-// Clear warning when the user edits an input.
+// Clear the old warning when the user starts correcting an input.
 loanInputs.forEach((input) => {
   input.addEventListener("input", () => {
     input.removeAttribute("aria-invalid");
@@ -186,76 +124,56 @@ loanInputs.forEach((input) => {
   });
 });
 
-// PROCESSING LAYER: calculate and compare both loans.
+// Calculate the loan when the form is submitted.
 loanForm.addEventListener("submit", (event) => {
   event.preventDefault();
   clearValidation();
 
   try {
-    const resultA = readLoanData(0, "Loan A");
+    const loanResult = readLoanData();
 
-    if (resultA.error) {
-      showError(resultA.error, resultA.field);
+    if (loanResult.error) {
+      showError(loanResult.error, loanResult.field);
       return;
     }
 
-    const resultB = readLoanData(3, "Loan B");
-
-    if (resultB.error) {
-      showError(resultB.error, resultB.field);
-      return;
-    }
-
-    const loanA = calculateLoan(resultA.data);
-    const loanB = calculateLoan(resultB.data);
-
-    displayLoanResults(loanA, "A");
-    displayLoanResults(loanB, "B");
-    displayComparison(loanA, loanB);
+    displayResults(calculateLoan(loanResult.data));
   } catch (error) {
-    console.error("Loan comparison error:", error);
-    showError(
-      "Sorry, the loans could not be compared. Check your entries and try again."
-    );
+    console.error("Loan calculation error:", error);
+    showError("Sorry, the payment could not be calculated. Check your entries and try again.");
   }
 });
 
-// Reset the form and restore default comparison.
+// Reset all fields and recalculate the default values.
 resetButton.addEventListener("click", () => {
   loanForm.reset();
   clearValidation();
 
-  const loanA = readLoanData(0, "Loan A");
-  const loanB = readLoanData(3, "Loan B");
+  try {
+    const loanResult = readLoanData();
 
-  if (loanA.data && loanB.data) {
-    const resultsA = calculateLoan(loanA.data);
-    const resultsB = calculateLoan(loanB.data);
+    if (loanResult.error) {
+      showError(loanResult.error, loanResult.field);
+      return;
+    }
 
-    displayLoanResults(resultsA, "A");
-    displayLoanResults(resultsB, "B");
-    displayComparison(resultsA, resultsB);
-  } else {
-    clearResults();
+    displayResults(calculateLoan(loanResult.data));
+  } catch (error) {
+    console.error("Loan reset error:", error);
+    showError("Unable to reset the calculator. Please try again.");
   }
 });
 
-// Display the default comparison when the page loads.
+// Show the initial estimate on page load.
 try {
-  const loanA = readLoanData(0, "Loan A");
-  const loanB = readLoanData(3, "Loan B");
+  const initialLoan = readLoanData();
 
-  if (loanA.data && loanB.data) {
-    const resultsA = calculateLoan(loanA.data);
-    const resultsB = calculateLoan(loanB.data);
-
-    displayLoanResults(resultsA, "A");
-    displayLoanResults(resultsB, "B");
-    displayComparison(resultsA, resultsB);
+  if (initialLoan.data) {
+    displayResults(calculateLoan(initialLoan.data));
   } else {
     clearResults();
   }
 } catch (error) {
-  console.error("Initial comparison error:", error);
+  console.error("Initial calculation error:", error);
   clearResults();
 }
