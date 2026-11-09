@@ -1,125 +1,46 @@
 
-# Simple Loan Calculator
-
-A responsive web application that calculates monthly loan payments,
-total repayment, and total interest based on user-provided loan details.
-
-## Live Application
-
-**[Open the Loan Calculator](https://dhb7717.github.io/Loan-Calculator-MGIS130/)**
+# Loan Planner & Comparison Tool
 
 ## Project Overview
+The Loan Planner & Comparison Tool is a web application that helps users compare two loan options side by side. Users can enter loan amounts, annual interest rates, and repayment terms to see which loan is more affordable.
 
-This project demonstrates a three-layer information system using
-HTML, CSS, and JavaScript. Users can enter a loan amount, annual
-interest rate, and repayment term to estimate the cost of a loan.
-
-The application runs in the browser and does not require an account,
-server, or database.
+## Problem
+Comparing loan options can be confusing because borrowers must calculate monthly payments, total repayment costs, and interest separately. This application makes the comparison easier by displaying the results together.
 
 ## Features
+- Compare two loan options side by side.
+- Calculate monthly loan payments.
+- Calculate total repayment amounts.
+- Calculate total interest costs.
+- Identify the loan with the lower total repayment.
+- Display the savings difference between the two loans.
+- Validate user inputs.
+- Reset the calculator.
+- Responsive layout for different screen sizes.
 
-- Calculates estimated monthly loan payments.
-- Displays total repayment and total interest.
-- Handles loans with a 0% annual interest rate.
-- Validates user input and displays helpful error messages.
-- Clears outdated results when input validation fails.
-- Includes a reset button to restore the form's default values.
-- Uses responsive CSS for desktop and mobile screens.
-- Formats monetary results in US dollars.
+## Technologies
+- HTML
+- CSS
+- JavaScript
+- Git and GitHub
+- GitHub Pages
 
-## Technology Stack
+## How to Use
+1. Enter the loan amount for Option A and Option B.
+2. Enter each loan's annual interest rate.
+3. Enter the repayment term in years.
+4. Click **Compare Loans**.
+5. Review the monthly payments, total repayment, and interest.
+6. Check which option costs less overall.
 
-- **HTML5:** Page structure and form controls.
-- **CSS3:** Styling, layout, and responsive design.
-- **JavaScript:** Input validation, loan calculations, and page updates.
-- **GitHub Pages:** Hosting the live application.
-- **Git and GitHub:** Source control and project history.
+## Testing
+The application was tested using different loan amounts, interest rates, and repayment terms. Both loan calculations and the comparison feature were confirmed to work.
 
-## Three-Layer Architecture
+## Architecture
+- **Presentation Layer:** HTML displays the interface and CSS handles styling.
+- **Processing Layer:** JavaScript validates inputs and calculates loan payments.
+- **Data Layer:** JavaScript reads loan information entered by the user.
 
-### 1. Data Layer
-
-The `readLoanData()` function reads the user's entries and validates
-the loan amount, annual interest rate, and repayment term before
-passing the data to the calculation logic.
-
-### 2. Processing Layer
-
-The `calculateLoan()` function calculates the monthly payment,
-total repayment, and total interest. It handles zero-interest loans
-separately and checks that calculation results are finite numbers.
-
-### 3. Presentation Layer
-
-The `displayResults()`, `clearResults()`, and `showError()` functions
-update the webpage with calculation results or validation feedback.
-HTML defines the interface, while CSS controls its appearance.
-
-Keeping these responsibilities separate makes the application easier
-to understand, test, and maintain. For example, the calculation
-formula can be changed without redesigning the page.
-
-## Project Files
-
-| File | Purpose |
-|---|---|
-| `index.html` | Defines the calculator interface and form fields. |
-| `styles.css` | Defines the visual design and responsive layout. |
-| `script.js` | Validates inputs, calculates payments, and updates results. |
-| `README.md` | Documents the project, architecture, and testing. |
-
-## How to Run Locally
-
-1. Download or clone this repository.
-2. Open the project folder.
-3. Open `index.html` in a modern web browser.
-4. Enter the loan details and select Calculate payment.
-5. Use Reset to restore the form's default values.
-
-No additional packages or build tools are required.
-
-
-## Testing and Verification
-
-The application was tested against the following scenarios. All tests passed.
-
-| Test | Expected Result | Status |
-|---|---|---|
-| Valid loan inputs | Monthly payment, total repayment, and total interest display correctly. | PASS |
-| Zero-interest loan | Monthly payment equals principal divided by the number of monthly payments, with $0.00 interest. | PASS |
-| Empty loan amount | An error appears, and outdated results are cleared. | PASS |
-| Negative loan amount | Invalid input is rejected with an appropriate error. | PASS |
-| Negative interest rate | Unsupported negative rates are rejected. | PASS |
-| Excessively high interest rate | Input is handled according to the validation rules without crashing. | PASS |
-| Fractional or out-of-range loan term | Invalid terms are rejected according to the validation rules. | PASS |
-| Reset button | Form fields return to their default values, errors clear, and results update appropriately. | PASS |
-| Invalid input after a successful calculation | Outdated results are cleared rather than displayed as current. | PASS |
-| Mobile layout | Form fields, buttons, messages, and results remain readable and usable on a narrow screen. | PASS |
-| Live deployment | The GitHub Pages application loads and performs calculations correctly. | PASS |
-
-**Overall result:** All 11 tests passed.
-
-
-## Limitations
-
-This calculator provides estimates based on a fixed annual interest
-rate and regular monthly payments. Actual loan terms, fees, taxes,
-insurance, lender rules, and payment schedules may affect real
-borrowing costs. The estimate is not a loan offer or financial advice.
-
-## Development and AI Assistance
-
-ChatGPT was used to assist with code review, error handling,
-responsive design, reset functionality, and project documentation.
-The code and suggested improvements should be tested before being
-treated as correct.
-
-The project owner should document their own decisions, observations,
-testing results, and reflections in the assignment's AI critique
-appendix.
-
-## Repository
-
-Source code and commit history:
-https://github.com/dhb7717/Loan-Calculator-MGIS130
+## Project Links
+- Live Application: https://dhb7717.github.io/Loan-Calculator-MGIS130/
+- GitHub Repository: https://github.com/dhb7717/Loan-Calculator-MGIS130
